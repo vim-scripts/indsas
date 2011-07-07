@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #####################################################
-### Perl Script for SAS style Indentation V.1     ###
+### Perl Script for SAS style Indentation V.1.1   ###
 ###                                               ###
 ### Usage:                                        ###
 ### 1) cat your_sas_script.sas|indsas             ###
@@ -9,11 +9,11 @@
 ###    OR                                         ###
 ###                                               ###
 ### 2) Put the following line in .vimrc and you   ###
-###    can use = to indent code in VI/VIM.        ###
+###    can use gg=G to indent code in VIM.        ###
 ###    set ep=your_path_to_indsas/indsas          ###
 ###                                               ###
 ### Created by David Yeung (shinedark@gmail.com)  ###
-### Last Update: 06/11/2011                       ###
+### Last Update: 07/03/2011                       ###
 ###                                               ###
 #####################################################
 
@@ -41,7 +41,7 @@ for (<STDIN>)
 		  $_=~/\%mend.*;/i || 
 		  ($_=~/^%*end;/i) ||
 		  ($_=~/^quit;/i  ) ||
-		  ($_=~/;/ && $curr_status eq "input" ) ||
+		  ($_=~/;/ && $curr_status eq "input_put" ) ||
 		  ($_=~/;/ && $curr_status eq "merge")  
 	   )
 	{	
@@ -85,8 +85,8 @@ for (<STDIN>)
 	{
 		$next_status = "else";	
 	}
-	elsif ($_=~/input(\s|$)/i && not($_=~/;/))
-	{	$next_status = "input";
+	elsif ($_=~/(in)*put(\s|$)/i  && not($_=~/;/))
+	{	$next_status = "input_put";
 	}
 	elsif ($_=~/^%*do\s+/i )
 	{	$next_status = "do";
