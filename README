@@ -1,18 +1,23 @@
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=3624
 
-A Perl script to indent a lousily indented or indentless SAS script. The scripts reads in the standard input, thus best used with pipe.
+A Perl script to indent a lousily indented or indentless SAS script. 
 
 Example:
-cat xxx.sas| indsas
+indsas xxx.sas
 or
-cat xxx.sas|indsas > new_xxx.sas
+indsas xxx.sas > new_xxx.sas
 
 
 It can be invoked in VIM by adding a line to .vimrc file.
 set ep=your_path_to_indsas/indsas
 
-While you are editing a file with VIM, type this to indent the file
+While you are editing a file with VIM, type this to indent the whole file
 gg=G
+
+if you want to go back to the current position after indenting, add this to your .vimrc
+nmap gW magg=G'a
+and you can type gW to indent the whole file at any position of the file.
+
 
 NOTE:
 1) indsas assumes the following SAS scripting(indenting) styles for input and merge statements:
@@ -41,6 +46,12 @@ run;
    *PROC SQL should be closed by QUIT;
 
 3) This script is still very primitive and does not account for all other eccentric scripting styles.
+
+4) indsas does not handle "cards" or "datalines" correctly. Please manually adjust those lines.
+
+5) indsas was only tested in the unix/linux environment.
+
+
  
 	
  

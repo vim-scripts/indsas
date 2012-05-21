@@ -4,7 +4,7 @@
 ### Perl Script for SAS style Indentation V.1.1   ###
 ###                                               ###
 ### Usage:                                        ###
-### 1) cat your_sas_script.sas|indsas             ###
+### 1) indsas your_sas_script.sas                 ###
 ###                                               ###
 ###    OR                                         ###
 ###                                               ###
@@ -13,8 +13,10 @@
 ###    set ep=your_path_to_indsas/indsas          ###
 ###                                               ###
 ### Created by David Yeung (shinedark@gmail.com)  ###
-### Last Update: 07/03/2011                       ###
-###                                               ###
+### Updates:                                      ###
+###  07/03/2011                            		  ###
+###  05/20/2012 : can work on file, doesn't need  ###
+###               pipe.                           ###
 #####################################################
 
 $0=~/.*\/(.*)/;
@@ -23,7 +25,7 @@ my $numtab = 0;
 my @status = ("root");
 
 
-for (<STDIN>)
+for (<>)
 {
 	chomp $_;
 
@@ -38,7 +40,7 @@ for (<STDIN>)
 
 	#check if indent is ending
  	if (  ($_=~/^run;/i && not($_=~/proc\s+/i) && not($_=~/data\s+/i)) ||
-		  $_=~/\%mend.*;/i || 
+		  $_=~/^\%mend.*;/i || 
 		  ($_=~/^%*end;/i) ||
 		  ($_=~/^quit;/i  ) ||
 		  ($_=~/;/ && $curr_status eq "input_put" ) ||
@@ -53,16 +55,17 @@ for (<STDIN>)
 	}
  
 
-	#print current line with indents.
+	#the indents.
 	my $header = "\t"x$numtab;
-	##print $header.$curr_status.$_."\n";
+
+	#print current line with indents.
 	print $header.$_."\n";
 
 
 	#get indent status for next;
 	my $next_status = "nodo";
 
- 	if ( $_=~/proc\s+/i && not($_=~/\Wrun;/) && not($_=~/\s+sql\s*;/i))
+ 	if ( $_=~/^proc\s+/i && not($_=~/\Wrun;/) && not($_=~/\s+sql\s*;/i))
 	{	$next_status = "proc";
 	}      
 	elsif ($_=~/^data\s+/i && not($_=~/run;/))
@@ -85,7 +88,7 @@ for (<STDIN>)
 	{
 		$next_status = "else";	
 	}
-	elsif ($_=~/(in)*put(\s|$)/i  && not($_=~/;/))
+	elsif ($_=~/^(in)*put(\s|$)/i  && not($_=~/;/))
 	{	$next_status = "input_put";
 	}
 	elsif ($_=~/^%*do\s+/i )
@@ -102,6 +105,5 @@ for (<STDIN>)
 		push @status,$next_status;
 		$numtab+=1;
 	}
-
 }
 
